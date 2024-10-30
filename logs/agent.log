@@ -1,0 +1,18 @@
+2024-10-30 16:51:23,888 - INFO - FastAPI and HTTPException imported successfully.
+2024-10-30 16:51:23,888 - INFO - Pydantic imported successfully.
+2024-10-30 16:51:23,889 - INFO - OS module imported successfully.
+2024-10-30 16:51:25,897 - INFO - Kubernetes client and config imported successfully.
+2024-10-30 16:51:25,898 - INFO - Asyncio imported successfully.
+2024-10-30 16:51:27,127 - INFO - OpenAI AsyncOpenAI imported successfully.
+2024-10-30 16:51:27,128 - INFO - Dotenv load_dotenv imported successfully and environment variables loaded.
+2024-10-30 16:51:27,128 - INFO - OpenAI API key set successfully.
+2024-10-30 16:51:27,587 - INFO - OpenAI client initialized successfully.
+2024-10-30 16:51:27,587 - INFO - Kubernetes configuration loaded successfully.
+2024-10-30 16:51:27,587 - INFO - FastAPI application initialized successfully.
+2024-10-30 16:51:27,603 - INFO - QueryRequest model defined successfully.
+2024-10-30 16:51:27,605 - INFO - QueryResponse model defined successfully.
+2024-10-30 16:51:27,655 - INFO - Starting FastAPI server on port 8000...
+2024-10-30 16:51:40,269 - INFO - Received query: What is the status of the pod named 'my-new-app-7ffc768d54-s9766'?
+2024-10-30 16:51:40,329 - INFO - Total number of nodes in the cluster: 1
+2024-10-30 16:51:40,702 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-10-30 16:51:40,702 - INFO - OpenAI response received successfully.

@@ -5,13 +5,18 @@ import re
 from fastapi import FastAPI, HTTPException
 # Logging module for console logging to track program flow and debug information
 import logging
-# Configuring logging to display info level messages in the console
+import os
+# Create a directory for logs
+log_directory = "logs"
+os.makedirs(log_directory, exist_ok=True)
+
+# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("agent.log"),  # Log to file
-        logging.StreamHandler()              # Log to console
+        logging.FileHandler(os.path.join(log_directory, "agent.log")), 
+        logging.StreamHandler()  # Log to console
     ]
 )
 logging.info("FastAPI and HTTPException imported successfully.")
