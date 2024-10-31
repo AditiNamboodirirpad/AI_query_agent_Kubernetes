@@ -1,4 +1,4 @@
-# Cleric Query Agent Assignment
+#  AI_query_agent_Kubernetes
 
 ## Overview
 This project implements an AI agent using FastAPI that interacts with a Kubernetes cluster to answer queries related to applications deployed within it. The agent utilizes OpenAI's API for natural language processing.
