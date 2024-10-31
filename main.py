@@ -1,4 +1,3 @@
-#-------------------------------------------------------------------------------------------------------------------------
 #IMPORTS
 import re
 # Importing FastAPI for building the web application and HTTPException for handling exceptions
@@ -6,7 +5,7 @@ from fastapi import FastAPI, HTTPException
 # Logging module for console logging to track program flow and debug information
 import logging
 import os
-# Create a directory for logs
+# Creating a directory for logs
 log_directory = "logs"
 os.makedirs(log_directory, exist_ok=True)
 
@@ -44,7 +43,7 @@ logging.info("OpenAI AsyncOpenAI imported successfully.")
 
 # Importing load_dotenv from dotenv to load environment variables from a .env file into the application
 from dotenv import load_dotenv
-# Load environment variables from .env file
+# Loading the environment variables from .env file
 load_dotenv()
 logging.info("Dotenv load_dotenv imported successfully and environment variables loaded.")
 
@@ -52,7 +51,7 @@ logging.info("Dotenv load_dotenv imported successfully and environment variables
 api_key = os.getenv("OPENAI_API_KEY")
 logging.info("OpenAI API key set successfully.")
 
-# Loading the OpenAI API key directly
+# Initializing the OpenAI client
 openai_client = AsyncOpenAI(api_key=api_key)
 logging.info("OpenAI client initialized successfully.")
 
@@ -60,13 +59,9 @@ logging.info("OpenAI client initialized successfully.")
 config.load_kube_config()
 logging.info("Kubernetes configuration loaded successfully.")
 
-# Entry point of API
+# Initializing the FastAPI application
 app = FastAPI()
 logging.info("FastAPI application initialized successfully.")
-
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
 
 
 # Defining the request model for the API using Pydantic's BaseModel
@@ -112,7 +107,7 @@ def get_pods_info(namespace="default"):
 # Function to fetch deployment information from a specified namespace
 def get_deployments_info(namespace="default"):
     try:
-         # Create an instance of the AppsV1Api to interact with Kubernetes deployments
+         # Creating an instance of the AppsV1Api to interact with Kubernetes deployments
         apps_v1 = client.AppsV1Api()
         # Retrieving the list of deployments in the specified namespace
         deployments = apps_v1.list_namespaced_deployment(namespace=namespace)
@@ -139,16 +134,19 @@ def get_deployments_info(namespace="default"):
 # Function to fetch logs from a specific pod in a specified namespace
 def get_pod_logs(pod_name, namespace="default"):
     try:
+        # Creating an instance of the CoreV1Api to interact with the Kubernetes API.
         api_instance = client.CoreV1Api()
+        # Fetching the logs of the specified pod in the provided namespace.
+        # This method reads the log of the pod and returns it as a string.
         logs = api_instance.read_namespaced_pod_log(name=pod_name, namespace=namespace)
         return logs
     except Exception as e:
         logging.error(f"Error fetching logs for pod {pod_name}: {e}")
+        # Returning an empty string if an error occurs to prevent the application from crashing.
         return ""
 
-# Function to provide details about each node, including its status and labels.
-# Function to provide details about each node, including its status, labels, and count.
-# Function to provide details about each node, including its status, labels, and count.
+
+# Function to provide details about each node
 def get_nodes_info():
     try:
         # Creating an instance of the CoreV1Api to interact with Kubernetes nodes
@@ -161,7 +159,7 @@ def get_nodes_info():
         # Counting nodes in the cluster
         node_count = len(nodes.items)
 
-        # Log the total number of nodes in the cluster
+        # Logging the total number of nodes in the cluster
         logging.info(f"Total number of nodes in the cluster: {node_count}")
 
         # Extracting relevant information for each node
@@ -179,7 +177,7 @@ def get_nodes_info():
         return node_info, node_count  
     except Exception as e:
         logging.error(f"Error fetching nodes information: {e}")
-        return [], 0  # Return empty list and count 0
+        return [], 0  # Returning empty list and count 0
 
 
 # Defining a POST endpoint at the "/query" route, specifying that it returns a QueryResponse model
@@ -190,7 +188,7 @@ async def query_kubernetes(request: QueryRequest):
     try:
         # Determining if the query is for pod logs
         if "log" in request.query.lower():
-            # Use regular expression to extract pod name
+            # Using regular expression to extract pod name
             match = re.search(r"log for the pod (.+?) in the default namespace", request.query, re.IGNORECASE)
             if match:
                 # Extracting the pod name from the matched group
@@ -203,7 +201,7 @@ async def query_kubernetes(request: QueryRequest):
                 logging.error("Pod name not found in query: %s", request.query)
                 return QueryResponse(query=request.query, answer="Pod name not found in the query.")
 
-        #Fetching info from the function get_pods_info
+        # Fetching information from the functions get_pods_info, get_deployments_info, and get_nodes_info
         pod_data = get_pods_info(namespace="default")
         deployment_data = get_deployments_info(namespace="default")
         node_data, node_count = get_nodes_info()
