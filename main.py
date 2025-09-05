@@ -56,8 +56,17 @@ openai_client = AsyncOpenAI(api_key=api_key)
 logging.info("OpenAI client initialized successfully.")
 
 # Initializing the Kubernetes configuration
-config.load_kube_config()
-logging.info("Kubernetes configuration loaded successfully.")
+from kubernetes import config
+
+
+try:
+    # Try in-cluster config (works inside Kubernetes pods)
+    config.load_incluster_config()
+    logging.info("Loaded in-cluster Kubernetes config")
+except config.ConfigException:
+    # Fallback to local kubeconfig (works on your laptop with Minikube/kubectl)
+    config.load_kube_config()
+    logging.info("Loaded local kubeconfig")
 
 # Initializing the FastAPI application
 app = FastAPI()
@@ -103,6 +112,7 @@ def get_pods_info(namespace="default"):
     except Exception as e:
         print(f"Error fetching pod information: {e}")
         return []
+     
 
 # Function to fetch deployment information from a specified namespace
 def get_deployments_info(namespace="default"):
@@ -201,20 +211,15 @@ async def query_kubernetes(request: QueryRequest):
                 logging.error("Pod name not found in query: %s", request.query)
                 return QueryResponse(query=request.query, answer="Pod name not found in the query.")
 
+
         # Fetching information from the functions get_pods_info, get_deployments_info, and get_nodes_info
         pod_data = get_pods_info(namespace="default")
         deployment_data = get_deployments_info(namespace="default")
         node_data, node_count = get_nodes_info()
 
-        # Constructing a prompt for the AI assistant, Tweaking the system prompt to get the answers in a clear and concize format.
-        prompt = "You are an Ai assistant and provide assistance to only kubernetes related queries.If the user asks how many pods just give the number of pods precisely and not more than that.Analyze the following Kubernetes pods, deployment and node data:\n" + "\n".join(
-        [f"Pod name: {pod['name']}, Namespace: {pod['namespace']}, Status: {pod['status']}, Node: {pod['node']}" for pod in pod_data]
-    ) + "\n".join(
-        [f"Name: {deployment['name']}, Replicas: {deployment['replicas']}, Available: {deployment['available_replicas']}, Status: {deployment['status']}" for deployment in deployment_data]
-     ) + "\n".join(
-                [f"Name: {node['name']}, Status: {node['status']}, Node IP: {node['node_ip']}, Unschedulable: {node['unschedulable']}" for node in node_data]
-            )
 
+        # Constructing a prompt for the AI assistant, Tweaking the system prompt to get the answers in a clear and concize format.
+        prompt = "You are an AI assistant that answers only Kubernetes-related queries. If the user asks how many pods, return the number.If the user asks for pod names, return the names. If the user asks about deployments or nodes, return that information clearly.Analyze the following Kubernetes pods, deployment and node data:\n" + "\n".join( [f"Pod name: {pod['name']}, Namespace: {pod['namespace']}, Status: {pod['status']}, Node: {pod['node']}" for pod in pod_data] ) + "\n".join( [f"Name: {deployment['name']}, Replicas: {deployment['replicas']}, Available: {deployment['available_replicas']}, Status: {deployment['status']}" for deployment in deployment_data] ) + "\n".join( [f"Name: {node['name']}, Status: {node['status']}, Node IP: {node['node_ip']}, Unschedulable: {node['unschedulable']}" for node in node_data] )
 
 
         # The messages for the OpenAI API, with a system message and the user's query

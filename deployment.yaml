@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aditi-agent-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aditi-agent
+  template:
+    metadata:
+      labels:
+        app: aditi-agent
+    spec:
+      containers:
+      - name: aditi-agent
+        image: kubernetes-agent:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: openai-secret
+              key: OPENAI_API_KEY
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aditi-agent-service
+spec:
+  selector:
+    app: aditi-agent
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: NodePort

@@ -16,3 +16,180 @@
 2024-10-31 18:04:03,736 - INFO - Total number of nodes in the cluster: 1
 2024-10-31 18:04:04,205 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2024-10-31 18:04:04,205 - INFO - OpenAI response received successfully.
+2025-09-04 19:02:15,222 - INFO - FastAPI and HTTPException imported successfully.
+2025-09-04 19:02:15,222 - INFO - Pydantic imported successfully.
+2025-09-04 19:02:15,222 - INFO - OS module imported successfully.
+2025-09-04 19:02:15,813 - INFO - Kubernetes client and config imported successfully.
+2025-09-04 19:02:15,813 - INFO - Asyncio imported successfully.
+2025-09-04 19:02:15,930 - INFO - OpenAI AsyncOpenAI imported successfully.
+2025-09-04 19:03:06,171 - INFO - FastAPI and HTTPException imported successfully.
+2025-09-04 19:03:06,171 - INFO - Pydantic imported successfully.
+2025-09-04 19:03:06,172 - INFO - OS module imported successfully.
+2025-09-04 19:03:06,343 - INFO - Kubernetes client and config imported successfully.
+2025-09-04 19:03:06,343 - INFO - Asyncio imported successfully.
+2025-09-04 19:03:06,444 - INFO - OpenAI AsyncOpenAI imported successfully.
+2025-09-04 19:03:06,445 - INFO - Dotenv load_dotenv imported successfully and environment variables loaded.
+2025-09-04 19:03:06,446 - INFO - OpenAI API key set successfully.
+2025-09-04 19:03:06,462 - INFO - OpenAI client initialized successfully.
+2025-09-04 19:03:06,464 - INFO - Kubernetes configuration loaded successfully.
+2025-09-04 19:03:06,464 - INFO - FastAPI application initialized successfully.
+2025-09-04 19:03:06,464 - INFO - QueryRequest model defined successfully.
+2025-09-04 19:03:06,464 - INFO - QueryResponse model defined successfully.
+2025-09-04 19:06:57,023 - INFO - Received query: How many pods are running?
+2025-09-04 19:06:57,089 - INFO - Total number of nodes in the cluster: 1
+2025-09-04 19:06:58,024 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-09-04 19:06:58,026 - INFO - Retrying request to /chat/completions in 0.491503 seconds
+2025-09-04 19:06:59,147 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-09-04 19:06:59,148 - INFO - Retrying request to /chat/completions in 0.825050 seconds
+2025-09-04 19:07:00,479 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2025-09-04 19:07:00,482 - ERROR - An error occurred: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+Traceback (most recent call last):
+  File "/Users/aditi/Documents/Projects/AI Kubernetes/AI_query_agent_Kubernetes/main.py", line 233, in query_kubernetes
+    openai_response = await openai_client.chat.completions.create(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/fastapi-env/lib/python3.11/site-packages/openai/resources/chat/completions/completions.py", line 2583, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/fastapi-env/lib/python3.11/site-packages/openai/_base_client.py", line 1794, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/fastapi-env/lib/python3.11/site-packages/openai/_base_client.py", line 1594, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.RateLimitError: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2025-09-04 19:11:48,737 - INFO - Received query: How many pods are running?
+2025-09-04 19:11:48,787 - INFO - Total number of nodes in the cluster: 1
+2025-09-04 19:11:51,334 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-09-04 19:11:51,348 - INFO - OpenAI response received successfully.
+2025-09-04 19:19:06,860 - INFO - Received query: How many pods are running?
+2025-09-04 19:19:06,927 - INFO - Total number of nodes in the cluster: 1
+2025-09-04 19:19:07,644 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-09-04 19:19:07,648 - INFO - OpenAI response received successfully.
+2025-09-04 19:20:14,675 - INFO - Received query: Give me the names of the pods in default namespace
+2025-09-04 19:20:14,743 - INFO - Total number of nodes in the cluster: 1
+2025-09-04 19:20:15,739 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-09-04 19:20:15,742 - INFO - OpenAI response received successfully.
+2025-09-04 19:33:18,344 - INFO - FastAPI and HTTPException imported successfully.
+2025-09-04 19:33:18,344 - INFO - Pydantic imported successfully.
+2025-09-04 19:33:18,344 - INFO - OS module imported successfully.
+2025-09-04 19:33:18,537 - INFO - Kubernetes client and config imported successfully.
+2025-09-04 19:33:18,538 - INFO - Asyncio imported successfully.
+2025-09-04 19:33:18,653 - INFO - OpenAI AsyncOpenAI imported successfully.
+2025-09-04 19:33:18,655 - INFO - Dotenv load_dotenv imported successfully and environment variables loaded.
+2025-09-04 19:33:18,655 - INFO - OpenAI API key set successfully.
+2025-09-04 19:33:18,673 - INFO - OpenAI client initialized successfully.
+2025-09-04 19:33:18,674 - INFO - Kubernetes configuration loaded successfully.
+2025-09-04 19:33:18,674 - INFO - FastAPI application initialized successfully.
+2025-09-04 19:33:18,675 - INFO - QueryRequest model defined successfully.
+2025-09-04 19:33:18,675 - INFO - QueryResponse model defined successfully.
+2025-09-04 19:33:19,256 - INFO - FastAPI and HTTPException imported successfully.
+2025-09-04 19:33:19,256 - INFO - Pydantic imported successfully.
+2025-09-04 19:33:19,256 - INFO - OS module imported successfully.
+2025-09-04 19:33:19,351 - INFO - Kubernetes client and config imported successfully.
+2025-09-04 19:33:19,351 - INFO - Asyncio imported successfully.
+2025-09-04 19:33:19,432 - INFO - OpenAI AsyncOpenAI imported successfully.
+2025-09-04 19:33:19,433 - INFO - Dotenv load_dotenv imported successfully and environment variables loaded.
+2025-09-04 19:33:19,433 - INFO - OpenAI API key set successfully.
+2025-09-04 19:33:19,447 - INFO - OpenAI client initialized successfully.
+2025-09-04 19:33:19,449 - INFO - Kubernetes configuration loaded successfully.
+2025-09-04 19:33:19,449 - INFO - FastAPI application initialized successfully.
+2025-09-04 19:33:19,449 - INFO - QueryRequest model defined successfully.
+2025-09-04 19:33:19,449 - INFO - QueryResponse model defined successfully.
+2025-09-04 19:33:50,184 - INFO - FastAPI and HTTPException imported successfully.
+2025-09-04 19:33:50,184 - INFO - Pydantic imported successfully.
+2025-09-04 19:33:50,184 - INFO - OS module imported successfully.
+2025-09-04 19:33:50,280 - INFO - Kubernetes client and config imported successfully.
+2025-09-04 19:33:50,280 - INFO - Asyncio imported successfully.
+2025-09-04 19:33:50,363 - INFO - OpenAI AsyncOpenAI imported successfully.
+2025-09-04 19:33:50,364 - INFO - Dotenv load_dotenv imported successfully and environment variables loaded.
+2025-09-04 19:33:50,364 - INFO - OpenAI API key set successfully.
+2025-09-04 19:33:50,377 - INFO - OpenAI client initialized successfully.
+2025-09-04 19:33:50,379 - INFO - Kubernetes configuration loaded successfully.
+2025-09-04 19:33:50,379 - INFO - FastAPI application initialized successfully.
+2025-09-04 19:33:50,379 - INFO - QueryRequest model defined successfully.
+2025-09-04 19:33:50,379 - INFO - QueryResponse model defined successfully.
+2025-09-04 19:34:12,686 - INFO - Received query: Give me the names of the pods in default namespace
+2025-09-04 19:34:12,752 - INFO - Total number of nodes in the cluster: 1
+2025-09-04 19:34:14,247 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-09-04 19:34:14,265 - INFO - OpenAI response received successfully.
+2025-09-04 19:34:20,338 - INFO - Received query: Give me the names of the pods in default namespace
+2025-09-04 19:34:20,405 - INFO - Total number of nodes in the cluster: 1
+2025-09-04 19:34:25,154 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-09-04 19:34:25,156 - INFO - OpenAI response received successfully.
+2025-09-04 19:50:19,845 - INFO - FastAPI and HTTPException imported successfully.
+2025-09-04 19:50:19,845 - INFO - Pydantic imported successfully.
+2025-09-04 19:50:19,845 - INFO - OS module imported successfully.
+2025-09-04 19:50:20,047 - INFO - Kubernetes client and config imported successfully.
+2025-09-04 19:50:20,047 - INFO - Asyncio imported successfully.
+2025-09-04 19:50:20,159 - INFO - OpenAI AsyncOpenAI imported successfully.
+2025-09-04 19:50:20,161 - INFO - Dotenv load_dotenv imported successfully and environment variables loaded.
+2025-09-04 19:50:20,161 - INFO - OpenAI API key set successfully.
+2025-09-04 19:50:20,178 - INFO - OpenAI client initialized successfully.
+2025-09-04 19:50:20,180 - INFO - Loaded local kubeconfig
+2025-09-04 19:50:20,180 - INFO - FastAPI application initialized successfully.
+2025-09-04 19:50:20,180 - INFO - QueryRequest model defined successfully.
+2025-09-04 19:50:20,180 - INFO - QueryResponse model defined successfully.
+2025-09-04 19:50:25,825 - INFO - FastAPI and HTTPException imported successfully.
+2025-09-04 19:50:25,825 - INFO - Pydantic imported successfully.
+2025-09-04 19:50:25,825 - INFO - OS module imported successfully.
+2025-09-04 19:50:25,919 - INFO - Kubernetes client and config imported successfully.
+2025-09-04 19:50:25,919 - INFO - Asyncio imported successfully.
+2025-09-04 19:50:26,003 - INFO - OpenAI AsyncOpenAI imported successfully.
+2025-09-04 19:50:26,004 - INFO - Dotenv load_dotenv imported successfully and environment variables loaded.
+2025-09-04 19:50:26,004 - INFO - OpenAI API key set successfully.
+2025-09-04 19:50:26,018 - INFO - OpenAI client initialized successfully.
+2025-09-04 19:50:26,019 - INFO - Loaded local kubeconfig
+2025-09-04 19:50:26,019 - INFO - FastAPI application initialized successfully.
+2025-09-04 19:50:26,020 - INFO - QueryRequest model defined successfully.
+2025-09-04 19:50:26,020 - INFO - QueryResponse model defined successfully.
+2025-09-04 19:51:13,476 - INFO - FastAPI and HTTPException imported successfully.
+2025-09-04 19:51:13,477 - INFO - Pydantic imported successfully.
+2025-09-04 19:51:13,477 - INFO - OS module imported successfully.
+2025-09-04 19:51:13,667 - INFO - Kubernetes client and config imported successfully.
+2025-09-04 19:51:13,667 - INFO - Asyncio imported successfully.
+2025-09-04 19:51:13,790 - INFO - OpenAI AsyncOpenAI imported successfully.
+2025-09-04 19:51:13,792 - INFO - Dotenv load_dotenv imported successfully and environment variables loaded.
+2025-09-04 19:51:13,792 - INFO - OpenAI API key set successfully.
+2025-09-04 19:51:13,809 - INFO - OpenAI client initialized successfully.
+2025-09-04 19:51:13,811 - INFO - Loaded local kubeconfig
+2025-09-04 19:51:13,811 - INFO - FastAPI application initialized successfully.
+2025-09-04 19:51:13,811 - INFO - QueryRequest model defined successfully.
+2025-09-04 19:51:13,811 - INFO - QueryResponse model defined successfully.
+2025-09-04 19:51:13,946 - INFO - FastAPI and HTTPException imported successfully.
+2025-09-04 19:51:13,946 - INFO - Pydantic imported successfully.
+2025-09-04 19:51:13,946 - INFO - OS module imported successfully.
+2025-09-04 19:51:14,048 - INFO - Kubernetes client and config imported successfully.
+2025-09-04 19:51:14,048 - INFO - Asyncio imported successfully.
+2025-09-04 19:51:14,134 - INFO - OpenAI AsyncOpenAI imported successfully.
+2025-09-04 19:51:14,135 - INFO - Dotenv load_dotenv imported successfully and environment variables loaded.
+2025-09-04 19:51:14,135 - INFO - OpenAI API key set successfully.
+2025-09-04 19:51:14,149 - INFO - OpenAI client initialized successfully.
+2025-09-04 19:51:14,150 - INFO - Loaded local kubeconfig
+2025-09-04 19:51:14,150 - INFO - FastAPI application initialized successfully.
+2025-09-04 19:51:14,150 - INFO - QueryRequest model defined successfully.
+2025-09-04 19:51:14,151 - INFO - QueryResponse model defined successfully.
+2025-09-04 20:04:44,166 - INFO - FastAPI and HTTPException imported successfully.
+2025-09-04 20:04:44,166 - INFO - Pydantic imported successfully.
+2025-09-04 20:04:44,166 - INFO - OS module imported successfully.
+2025-09-04 20:04:44,356 - INFO - Kubernetes client and config imported successfully.
+2025-09-04 20:04:44,356 - INFO - Asyncio imported successfully.
+2025-09-04 20:04:44,474 - INFO - OpenAI AsyncOpenAI imported successfully.
+2025-09-04 20:04:44,475 - INFO - Dotenv load_dotenv imported successfully and environment variables loaded.
+2025-09-04 20:04:44,476 - INFO - OpenAI API key set successfully.
+2025-09-04 20:04:44,495 - INFO - OpenAI client initialized successfully.
+2025-09-04 20:04:44,497 - INFO - Loaded local kubeconfig
+2025-09-04 20:04:44,497 - INFO - FastAPI application initialized successfully.
+2025-09-04 20:04:44,497 - INFO - QueryRequest model defined successfully.
+2025-09-04 20:04:44,498 - INFO - QueryResponse model defined successfully.
+2025-09-04 20:08:27,383 - INFO - FastAPI and HTTPException imported successfully.
+2025-09-04 20:08:27,383 - INFO - Pydantic imported successfully.
+2025-09-04 20:08:27,383 - INFO - OS module imported successfully.
+2025-09-04 20:08:27,572 - INFO - Kubernetes client and config imported successfully.
+2025-09-04 20:08:27,572 - INFO - Asyncio imported successfully.
+2025-09-04 20:08:27,687 - INFO - OpenAI AsyncOpenAI imported successfully.
+2025-09-04 20:08:27,689 - INFO - Dotenv load_dotenv imported successfully and environment variables loaded.
+2025-09-04 20:08:27,689 - INFO - OpenAI API key set successfully.
+2025-09-04 20:08:27,706 - INFO - OpenAI client initialized successfully.
+2025-09-04 20:08:27,708 - INFO - Loaded local kubeconfig
+2025-09-04 20:08:27,708 - INFO - FastAPI application initialized successfully.
+2025-09-04 20:08:27,708 - INFO - QueryRequest model defined successfully.
+2025-09-04 20:08:27,708 - INFO - QueryResponse model defined successfully.
