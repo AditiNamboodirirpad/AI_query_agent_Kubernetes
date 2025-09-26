@@ -12,6 +12,7 @@ spec:
       labels:
         app: aditi-agent
     spec:
+      serviceAccountName: aditi-agent-sa
       containers:
       - name: aditi-agent
         image: kubernetes-agent:latest
@@ -24,7 +25,6 @@ spec:
             secretKeyRef:
               name: openai-secret
               key: OPENAI_API_KEY
-
 ---
 apiVersion: v1
 kind: Service

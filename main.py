@@ -1,10 +1,16 @@
 #IMPORTS
 import re
-# Importing FastAPI for building the web application and HTTPException for handling exceptions
+import json
 from fastapi import FastAPI, HTTPException
-# Logging module for console logging to track program flow and debug information
-import logging
+from pydantic import BaseModel
+from kubernetes import client, config
+import asyncio
+from openai import AsyncOpenAI
+from dotenv import load_dotenv
+
 import os
+import logging
+
 # Creating a directory for logs
 log_directory = "logs"
 os.makedirs(log_directory, exist_ok=True)
@@ -14,42 +20,21 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(os.path.join(log_directory, "agent.log")), 
+        logging.FileHandler(os.path.join\
+                            (log_directory, "agent.log")),
         logging.StreamHandler()  # Log to console
     ]
 )
-logging.info("FastAPI and HTTPException imported successfully.")
-
-# Importing Pydantic's BaseModel to define data validation and serialization for request bodies
-from pydantic import BaseModel
-logging.info("Pydantic imported successfully.")
-
-# Importing OS module to interact with environment variables and the file system
-import os
-logging.info("OS module imported successfully.")
 
 
-# Importing Kubernetes client and config modules to interact with Kubernetes API
-from kubernetes import client, config
-logging.info("Kubernetes client and config imported successfully.")
-
-# Importing asyncio module for asynchronous programming, necessary for non-blocking I/O operations
-import asyncio
-logging.info("Asyncio imported successfully.")
-
-# Importing AsyncOpenAI for making asynchronous API calls to OpenAI's API
-from openai import AsyncOpenAI
-logging.info("OpenAI AsyncOpenAI imported successfully.")
-
-# Importing load_dotenv from dotenv to load environment variables from a .env file into the application
-from dotenv import load_dotenv
-# Loading the environment variables from .env file
 load_dotenv()
-logging.info("Dotenv load_dotenv imported successfully and environment variables loaded.")
-
-# Loading the OpenAI API key from environment variable
 api_key = os.getenv("OPENAI_API_KEY")
-logging.info("OpenAI API key set successfully.")
+if not api_key:
+    logging.error("OPENAI_API_KEY not found in environment variables.")
+    raise ValueError("Missing OpenAI API key")
+else:
+    logging.info("Environment variables loaded successfully.")
+
 
 # Initializing the OpenAI client
 openai_client = AsyncOpenAI(api_key=api_key)
@@ -58,13 +43,12 @@ logging.info("OpenAI client initialized successfully.")
 # Initializing the Kubernetes configuration
 from kubernetes import config
 
-
 try:
-    # Try in-cluster config (works inside Kubernetes pods)
+    # Works inside the cluster
     config.load_incluster_config()
     logging.info("Loaded in-cluster Kubernetes config")
 except config.ConfigException:
-    # Fallback to local kubeconfig (works on your laptop with Minikube/kubectl)
+    # Fallback for local development
     config.load_kube_config()
     logging.info("Loaded local kubeconfig")
 
@@ -77,14 +61,12 @@ logging.info("FastAPI application initialized successfully.")
 # QueryRequest will validate incoming requests, ensuring they contain a 'query' field of type string
 class QueryRequest(BaseModel):
     query: str
-logging.info("QueryRequest model defined successfully.")
 
 # Defining the response model for the API using Pydantic's BaseModel
 # QueryResponse will format the response sent back to the client, containing the 'query' and 'answer' fields
 class QueryResponse(BaseModel):
     query: str
     answer: str
-logging.info("QueryResponse model defined successfully.")
 
 
 # Function fetches information about all pods in a specified Kubernetes namespace. Returns a list of dictionaries containing pod information, or an empty list if an error occurs.
@@ -94,7 +76,7 @@ def get_pods_info(namespace="default"):
         # Reference to the CoreV1Api for pod operations
         api_instance = client.CoreV1Api()
         # Fetching the list of pods within the specified namespace
-        pods = api_instance.list_namespaced_pod(namespace="default")
+        pods = api_instance.list_namespaced_pod(namespace=namespace)
         # Initializing an empty list to hold the information of each pod
         pod_info = []
         # Extracting relevant information for each pod
@@ -107,11 +89,12 @@ def get_pods_info(namespace="default"):
 
             }
             pod_info.append(info)
-        return pod_info
+        pod_count = len(pod_info)
+        return pod_info, pod_count
    #Exception handling 
     except Exception as e:
         print(f"Error fetching pod information: {e}")
-        return []
+        return [], 0 
      
 
 # Function to fetch deployment information from a specified namespace
@@ -134,11 +117,12 @@ def get_deployments_info(namespace="default"):
                 "strategy": deployment.spec.strategy.type if deployment.spec.strategy else "Unknown"
             }
             deployment_info.append(info)
-        return deployment_info
+        deployment_count = len(deployment_info)
+        return deployment_info, deployment_count
     #Exception handling 
     except Exception as e:
         logging.error(f"Error fetching deployment information: {e}")
-        return []
+        return [],0
 
 
 # Function to fetch logs from a specific pod in a specified namespace
@@ -199,40 +183,83 @@ async def query_kubernetes(request: QueryRequest):
         # Determining if the query is for pod logs
         if "log" in request.query.lower():
             # Using regular expression to extract pod name
-            match = re.search(r"log for the pod (.+?) in the default namespace", request.query, re.IGNORECASE)
+            # Match "log ... <pod-name>" in a flexible way
+            match = re.search(r"log\s+(?:for\s+)?(?:the\s+pod\s+)?([a-zA-Z0-9-]+)", request.query, re.IGNORECASE)
             if match:
-                # Extracting the pod name from the matched group
-                pod_name = match.group(1).strip()  
-                logging.info("Extracted pod name: %s", pod_name)
-                # Fetching logs for the specified pod
+                pod_name = match.group(1).strip()
                 logs = get_pod_logs(pod_name, namespace="default")
                 return QueryResponse(query=request.query, answer=logs)
             else:
-                logging.error("Pod name not found in query: %s", request.query)
                 return QueryResponse(query=request.query, answer="Pod name not found in the query.")
+
+            # match = re.search(r"log for the pod (.+?) in the default namespace", request.query, re.IGNORECASE)
+            # if match:
+            #     # Extracting the pod name from the matched group
+            #     pod_name = match.group(1).strip()  
+            #     logging.info("Extracted pod name: %s", pod_name)
+            #     # Fetching logs for the specified pod
+            #     logs = get_pod_logs(pod_name, namespace="default")
+            #     return QueryResponse(query=request.query, answer=logs)
+            # else:
+            #     logging.error("Pod name not found in query: %s", request.query)
+            #     return QueryResponse(query=request.query, answer="Pod name not found in the query.")
 
 
         # Fetching information from the functions get_pods_info, get_deployments_info, and get_nodes_info
-        pod_data = get_pods_info(namespace="default")
-        deployment_data = get_deployments_info(namespace="default")
+        pod_data, pod_count = get_pods_info(namespace="default")
+        deployment_data, deployment_count = get_deployments_info(namespace="default")
         node_data, node_count = get_nodes_info()
 
+        # if "how many pods" in request.query.lower():
+        #     return QueryResponse(query=request.query, answer=str(pod_count))
+
+        # elif "get pods" in request.query.lower():
+        #     names = "\n".join([p["name"] for p in pod_data])
+        #     return QueryResponse(query=request.query, answer=names)
+
+        # Creating structured JSON-style context
+        context = {
+            "pods": pod_data,
+            "deployments": deployment_data,
+            "nodes": node_data,
+            "pod_count": pod_count,
+            "deployment_count": deployment_count,
+            "node_count": node_count
+        }
 
         # Constructing a prompt for the AI assistant, Tweaking the system prompt to get the answers in a clear and concize format.
-        prompt = "You are an AI assistant that answers only Kubernetes-related queries. If the user asks how many pods, return the number.If the user asks for pod names, return the names. If the user asks about deployments or nodes, return that information clearly.Analyze the following Kubernetes pods, deployment and node data:\n" + "\n".join( [f"Pod name: {pod['name']}, Namespace: {pod['namespace']}, Status: {pod['status']}, Node: {pod['node']}" for pod in pod_data] ) + "\n".join( [f"Name: {deployment['name']}, Replicas: {deployment['replicas']}, Available: {deployment['available_replicas']}, Status: {deployment['status']}" for deployment in deployment_data] ) + "\n".join( [f"Name: {node['name']}, Status: {node['status']}, Node IP: {node['node_ip']}, Unschedulable: {node['unschedulable']}" for node in node_data] )
-
-
-        # The messages for the OpenAI API, with a system message and the user's query
+        #prompt = "You are an AI assistant that answers only Kubernetes-related queries. If the user asks how many pods, return the number.If the user asks for pod names, return the names. If the user asks about deployments or nodes, return that information clearly.Analyze the following Kubernetes pods, deployment and node data:\n" + "\n".join( [f"Pod name: {pod['name']}, Namespace: {pod['namespace']}, Status: {pod['status']}, Node: {pod['node']}" for pod in pod_data] ) + "\n".join( [f"Name: {deployment['name']}, Replicas: {deployment['replicas']}, Available: {deployment['available_replicas']}, Status: {deployment['status']}" for deployment in deployment_data] ) + "\n".join( [f"Name: {node['name']}, Status: {node['status']}, Node IP: {node['node_ip']}, Unschedulable: {node['unschedulable']}" for node in node_data] )
+        # Prompt with strict instructions
         openai_message = [
             {
                 "role": "system",
-                "content": f"{prompt}"
+                "content": (
+                    "You are a Kubernetes assistant. "
+                    "Answer in clear, natural sentences. "
+                    "Base all responses ONLY on the provided JSON cluster data. "
+                    "If the user asks for counts, state them in a sentence "
+                    "(e.g., 'There are 5 pods running in the default namespace.'). "
+                    "If they ask for names, list them naturally in one sentence. "
+                    "If they ask about deployments or nodes, summarize them clearly."
+                )
             },
             {
                 "role": "user",
-                "content": f"{request.query}"
-            } 
+                "content": f"Cluster data:\n{json.dumps(context, indent=2)}\n\nQuestion: {request.query}"
+            }
         ]
+
+        # # The messages for the OpenAI API, with a system message and the user's query
+        # openai_message = [
+        #     {
+        #         "role": "system",
+        #         "content": f"{prompt}"
+        #     },
+        #     {
+        #         "role": "user",
+        #         "content": f"{request.query}"
+        #     } 
+        # ]
 
         # Using OpenAI chat API
         openai_response = await openai_client.chat.completions.create(
