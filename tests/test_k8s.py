@@ -1,9 +1,6 @@
 """Unit tests for the Kubernetes data layer."""
 from unittest.mock import MagicMock, patch
 
-import pytest
-
-
 class TestListPods:
     def test_returns_formatted_pod_data(self, mock_k8s_pods):
         with patch("src.k8s.pods.client") as mock_client:
