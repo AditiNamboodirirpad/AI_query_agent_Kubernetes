@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  k8sgpt:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      # Mount local kubeconfig so the container can reach your cluster
+      - "${HOME}/.kube:/home/appuser/.kube:ro"
+      - "./logs:/app/logs"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8sgpt-deployment
+  labels:
+    app: k8sgpt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8sgpt
+  template:
+    metadata:
+      labels:
+        app: k8sgpt
+    spec:
+      serviceAccountName: k8sgpt-sa
+      containers:
+        - name: k8sgpt
+          image: k8sgpt:latest
+          imagePullPolicy: Never   # Minikube local image; change to Always for remote registry
+          ports:
+            - containerPort: 8000
+          env:
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: anthropic-secret
+                  key: ANTHROPIC_API_KEY
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8sgpt-service
+spec:
+  selector:
+    app: k8sgpt
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: NodePort

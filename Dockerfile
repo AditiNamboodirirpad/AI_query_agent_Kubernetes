@@ -1,20 +1,23 @@
-# Use a slim Python image
 FROM python:3.11-slim
 
-# Set working directory
+# Security: run as non-root user
+RUN useradd --create-home appuser
+
 WORKDIR /app
 
-# Copy requirements first (better for caching)
+# Install dependencies before copying source (layer caching)
 COPY requirements.txt .
-
-# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the code
-COPY . .
+# Copy application source
+COPY src/ ./src/
+COPY main.py .
 
-# Expose FastAPI port
+# Create logs directory with correct ownership
+RUN mkdir -p logs && chown -R appuser:appuser /app
+
+USER appuser
+
 EXPOSE 8000
 
-# Start the app
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,174 +1,188 @@
-# AI Query Agent for Kubernetes
+# K8sGPT — AI Kubernetes Assistant
 
-## Overview
-This project implements an AI-powered agent using FastAPI that interacts with a Kubernetes cluster to answer queries about deployments, pods, nodes, and logs.  
-It integrates the OpenAI API for natural language processing and the Kubernetes Python client for cluster operations.  
+[![CI](https://github.com/AditiNamboodirirpad/AI_query_agent_Kubernetes/actions/workflows/ci.yml/badge.svg)](https://github.com/AditiNamboodirirpad/AI_query_agent_Kubernetes/actions/workflows/ci.yml)
 
----
+## Demo
 
-## Technologies
-- **Python 3.10**: Programming language for the implementation.
-- **FastAPI**: Framework for building the web application.
-- **OpenAI API**: For natural language processing.
-- **Kubernetes Client**: For interacting with the Kubernetes API.
-- **Docker & Minikube**: For containerization and local Kubernetes deployment.
+[![K8sGPT Demo](https://asciinema.org/a/855106.svg)](https://asciinema.org/a/855106)
 
 ---
 
-## Setup and Installation
+## What is this?
 
-### 1. Clone the Repository
+I built this because I found Kubernetes really hard to navigate at first — there are so many `kubectl` commands just to check basic things. So I made an AI assistant that lets you ask plain English questions about your cluster and get real answers.
+
+You type `k8sgpt` in the terminal and just... talk to it.
+
+```
+You › how many pods are running?
+You › why is my deployment failing?
+You › show me logs for pod nginx-abc123
+You › how is my cluster doing overall?
+```
+
+The AI figures out which Kubernetes data it needs to answer each question — it doesn't just dump everything at once.
+
+---
+
+## How it works
+
+The app has two parts:
+
+1. **A FastAPI server** that connects to the Kubernetes cluster and exposes a `/query` endpoint
+2. **A terminal chat client** (`k8sgpt` command) that talks to the server
+
+When you ask a question, the server passes it to a **LangGraph agent**. The agent uses Claude (Anthropic) to decide which Kubernetes tools to call — things like `list_pods`, `get_pod_logs`, `list_events` — and then combines the results into an answer.
+
+```
+Your question
+    ↓
+Claude thinks: "I need pod data for this"
+    ↓
+Agent calls list_pods tool → gets real cluster data
+    ↓
+Claude thinks: "I have enough to answer"
+    ↓
+You get a clear answer
+```
+
+This is called a ReAct agent (Reason + Act). It's different from just sending all your cluster data to an LLM every time — the agent only fetches what it actually needs.
+
+---
+
+## Tech stack
+
+- Python 3.10
+- FastAPI + Uvicorn
+- LangGraph (ReAct agent pattern)
+- Claude via `langchain-anthropic`
+- Kubernetes Python client
+- Pydantic v2
+- Docker + Minikube (local Kubernetes cluster)
+
+---
+
+## Setup
+
+### What you need
+- Python 3.10+
+- [Minikube](https://minikube.sigs.k8s.io/docs/start/) installed
+- Docker Desktop running
+- An [Anthropic API key](https://console.anthropic.com)
+
+### Install
+
 ```bash
-git clone https://github.com/yourusername/AI_query_agent_Kubernetes.git
+git clone https://github.com/AditiNamboodirirpad/AI_query_agent_Kubernetes.git
 cd AI_query_agent_Kubernetes
-```
 
-### 2. Install Dependencies (for local testing)
-```bash
 pip install -r requirements.txt
+pip install -e .  # registers the k8sgpt command
 ```
-Dependencies include FastAPI, Uvicorn, OpenAI, Kubernetes, and python-dotenv.
 
-### 3. Configure Environment Variables
-Create a `.env` file in the project root:
-```env
-OPENAI_API_KEY=your_openai_api_key_here
+### Configure
+
+```bash
+cp .env.example .env
+# open .env and add your ANTHROPIC_API_KEY
 ```
+
+### Start Minikube
+
+```bash
+minikube start --driver=docker --kubernetes-version=v1.32.0
+```
+
+### Run the server
+
+```bash
+uvicorn main:app --port 8000
+```
+
+### Use the terminal client
+
+```bash
+k8sgpt
+```
+
+That's it. You should see `Kubernetes connected` and can start asking questions.
 
 ---
 
-## Dockerization
+## Deploy to Kubernetes (Minikube)
 
-A `Dockerfile` is provided to containerize the application.  
-
-1. Start Minikube:
 ```bash
-minikube start --driver=docker
-```
-
-2. Point Docker to Minikube’s environment:
-```bash
+# Point Docker at Minikube so the image is built inside the cluster
 eval $(minikube docker-env)
-```
+docker build -t k8sgpt:latest .
 
-3. Build the image:
-```bash
-docker build -t kubernetes-agent:latest .
-```
+# Create a secret for the API key
+kubectl create secret generic anthropic-secret \
+  --from-literal=ANTHROPIC_API_KEY="your_key_here"
 
-4. Verify the image exists:
-```bash
-docker images
-```
+# Apply RBAC permissions and deploy the app
+kubectl apply -f k8s/rbac.yaml
+kubectl apply -f k8s/deployment.yaml
 
----
-
-## Kubernetes Deployment
-
-1. Create a Kubernetes Secret for the OpenAI API key:
-```bash
-kubectl create secret generic openai-secret   --from-literal=OPENAI_API_KEY="your_openai_api_key_here"
-```
-
-2. Apply the Deployment and Service:
-```bash
-kubectl apply -f deployment.yaml
-```
-
-3. Check resources:
-```bash
-kubectl get deployments
+# Check it's running
 kubectl get pods
-kubectl get svc
-```
 
-The `deployment.yaml` defines:  
-- A Deployment (`aditi-agent-deployment`) with one replica of the FastAPI agent.  
-- A Service (`aditi-agent-service`) exposing port 8000 via NodePort.  
+# Open the service
+minikube service k8sgpt-service
+```
 
 ---
 
-## Accessing the Service
+## API endpoints
 
-Expose the service with Minikube:
+| Endpoint | Method | What it does |
+|---|---|---|
+| `/query` | POST | Ask the agent a question |
+| `/health` | GET | Check if the server and cluster are reachable |
+| `/cluster/health` | GET | Get a 0–100 health score with AI analysis |
+| `/sessions/{id}` | DELETE | Clear conversation history |
+
+The Swagger UI is available at `http://localhost:8000/docs` when the server is running.
+
+---
+
+## Example queries to try
+
 ```bash
-minikube service aditi-agent-service
+# Deploy some test workloads first
+kubectl create deployment nginx --image=nginx --replicas=3
+kubectl create deployment broken-app --image=nginx:doesnotexist --replicas=2
+
+# Then ask the agent
+k8sgpt
 ```
 
-This opens the FastAPI app in your browser at a tunneled localhost port, for example:  
-`http://127.0.0.1:53716/docs`  
-
-Swagger UI (`/docs`) is auto-generated by FastAPI and can be used to test queries interactively.  
+```
+You › how many pods are running?
+You › why is broken-app failing?
+You › how do I fix it?
+You › what is my cluster health score?
+```
 
 ---
 
-## Testing
+## Project structure
 
-Deploy a sample nginx workload to test the agent:
+```
+src/
+  k8s/        # functions that call the Kubernetes API
+  agent/      # LangGraph agent, tools, and conversation memory
+  api/        # FastAPI routes and models
+cli/          # terminal chat client (the k8sgpt command)
+k8s/          # Kubernetes deployment manifests and RBAC config
+tests/        # unit and integration tests
+```
+
+---
+
+## Running tests
+
 ```bash
-kubectl create deployment aditi-first-deployment --image=nginx --replicas=5
+pip install -r requirements-dev.txt
+pytest tests/ -v
 ```
-
-Example queries in Swagger UI:
-```json
-{ "query": "How many pods are running in the default namespace?" }
-{ "query": "Give me the names of the pods in default namespace" }
-{ "query": "What deployments are running in default namespace?" }
-{ "query": "Show me the log for the pod <pod-name> in the default namespace" }
-```
-
----
-
-## Code Workflow
-
-### Imports
-- Imported necessary libraries such as FastAPI (for the API framework), logging (for monitoring), Pydantic (for data validation), and the Kubernetes Python client (for API interaction).  
-- Additional imports include dotenv (for environment variables) and the OpenAI client (for natural language answers).  
-
-### Environment Variables
-- Loaded environment variables from a `.env` file to securely retrieve the OpenAI API key.  
-- Initialized the AsyncOpenAI client with this key for querying the OpenAI API.  
-
-### FastAPI Application
-- Initialized a FastAPI application instance to act as the web server that handles requests and responses.  
-
-### Data Models
-Defined request and response models using Pydantic:  
-- `QueryRequest`: validates incoming requests containing a `query` string.  
-- `QueryResponse`: formats the outgoing response with both the original `query` and the generated `answer`.  
-
-### Kubernetes API Interactions
-Developed helper functions to interact with the Kubernetes cluster:  
-- `get_pods_info`: Fetches information about all pods in a specified namespace.  
-- `get_deployments_info`: Retrieves deployment information.  
-- `get_pod_logs`: Fetches logs from a specified pod.  
-- `get_nodes_info`: Provides details about each node in the cluster, including status, labels, and availability.  
-
-### API Endpoint
-Created a POST endpoint (`/query`) to handle incoming queries:  
-- Logs the received query for debugging.  
-- Determines if the query is about pod logs or general Kubernetes resources.  
-- Fetches relevant Kubernetes data (pods, deployments, nodes).  
-- Constructs a prompt that combines this data with the user’s query.  
-- Uses the OpenAI API to generate a natural language answer.  
-- Returns the answer formatted as a `QueryResponse`.  
-
-### Error Handling
-- Implemented try/except blocks to catch errors during Kubernetes API calls.  
-- Logs all exceptions for troubleshooting.  
-- Returns an appropriate `HTTPException` when issues occur (e.g., missing pods or invalid queries).  
-
-### Application Execution
-- The entry point runs the FastAPI application using Uvicorn:
-  ```python
-  if __name__ == "__main__":
-      uvicorn.run(app, host="0.0.0.0", port=8000)
-  ```
-- Locally (without Docker): run with `uvicorn main:app --reload` to quickly test code changes before building the Docker image.  
-- Inside Kubernetes: the Dockerized container runs Uvicorn automatically when the pod starts.  
-
----
-
-## Conclusion
-This project demonstrates the integration of FastAPI, Docker, Kubernetes, and OpenAI into a functional agent capable of answering natural language queries about cluster resources.  
-It can be extended for more complex use cases, making it a foundation for intelligent Kubernetes assistants.  

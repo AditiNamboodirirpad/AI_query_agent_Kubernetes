@@ -1,5 +1,30 @@
+# Python
 __pycache__/
-*.pyc
-#*.log
-*.env
+*.py[cod]
+*.pyo
+.mypy_cache/
+.ruff_cache/
+
+# Environment
+.env
 *.conda
+*.egg-info/
+dist/
+build/
+
+# Logs
+logs/
+*.log
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.DS_Store
+
+# Local notes
+*.docx

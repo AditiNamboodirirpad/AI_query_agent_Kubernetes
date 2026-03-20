@@ -193,3 +193,76 @@ openai.RateLimitError: Error code: 429 - {'error': {'message': 'You exceeded you
 2025-09-04 20:08:27,708 - INFO - FastAPI application initialized successfully.
 2025-09-04 20:08:27,708 - INFO - QueryRequest model defined successfully.
 2025-09-04 20:08:27,708 - INFO - QueryResponse model defined successfully.
+2026-03-19 17:31:48,860 | INFO     | src.k8s.client | Loaded local kubeconfig (~/.kube/config)
+2026-03-19 17:32:07,923 | INFO     | src.api.routes.query | [session=7b699a70-9cd8-4a9a-91c2-2278f085d50c] Query: How many pods are in the cluster?
+2026-03-19 17:32:10,223 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:32:13,294 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:32:13,299 | INFO     | src.api.routes.query | [session=7b699a70-9cd8-4a9a-91c2-2278f085d50c] Answer generated (152 chars).
+2026-03-19 17:33:18,699 | INFO     | src.api.routes.query | [session=7b699a70-9cd8-4a9a-91c2-2278f085d50c] Query: How many deployments are there?
+2026-03-19 17:33:20,570 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:33:23,234 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:33:23,237 | INFO     | src.api.routes.query | [session=7b699a70-9cd8-4a9a-91c2-2278f085d50c] Answer generated (335 chars).
+2026-03-19 17:33:54,745 | INFO     | src.api.routes.query | [session=7b699a70-9cd8-4a9a-91c2-2278f085d50c] Query: How many replicas in K8sgpt?
+2026-03-19 17:33:58,972 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:33:58,976 | INFO     | src.api.routes.query | [session=7b699a70-9cd8-4a9a-91c2-2278f085d50c] Answer generated (80 chars).
+2026-03-19 17:34:30,148 | INFO     | src.api.routes.query | [session=7b699a70-9cd8-4a9a-91c2-2278f085d50c] Query: how many replicas in ngnix?
+2026-03-19 17:34:31,845 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:34:31,849 | INFO     | src.api.routes.query | [session=7b699a70-9cd8-4a9a-91c2-2278f085d50c] Answer generated (80 chars).
+2026-03-19 17:35:18,815 | INFO     | src.api.routes.query | [session=7b699a70-9cd8-4a9a-91c2-2278f085d50c] Query: what warnings are in the cluster?
+2026-03-19 17:35:22,532 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:35:26,421 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:35:26,425 | INFO     | src.api.routes.query | [session=7b699a70-9cd8-4a9a-91c2-2278f085d50c] Answer generated (402 chars).
+2026-03-19 17:44:26,514 | INFO     | src.api.routes.query | [session=524d64be-9f08-4402-b2e6-6fb1619686c3] Query: how many pods are running in the cluster?
+2026-03-19 17:44:28,865 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:44:35,294 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:44:35,298 | INFO     | src.api.routes.query | [session=524d64be-9f08-4402-b2e6-6fb1619686c3] Answer generated (725 chars).
+2026-03-19 17:45:04,479 | INFO     | src.api.routes.query | [session=524d64be-9f08-4402-b2e6-6fb1619686c3] Query: exit
+2026-03-19 17:45:07,038 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:45:07,043 | INFO     | src.api.routes.query | [session=524d64be-9f08-4402-b2e6-6fb1619686c3] Answer generated (110 chars).
+2026-03-19 17:47:29,561 | INFO     | src.api.routes.query | [session=ef332a38-6acd-46d7-8279-ccbac865fb3c] Query: How many pods are running in the cluster?
+2026-03-19 17:47:31,525 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:47:39,188 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:47:39,192 | INFO     | src.api.routes.query | [session=ef332a38-6acd-46d7-8279-ccbac865fb3c] Answer generated (856 chars).
+2026-03-19 17:48:04,593 | INFO     | src.api.routes.query | [session=ef332a38-6acd-46d7-8279-ccbac865fb3c] Query: What deployments do we have and are they all healthy?
+2026-03-19 17:48:06,754 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:48:13,258 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:48:13,261 | INFO     | src.api.routes.query | [session=ef332a38-6acd-46d7-8279-ccbac865fb3c] Answer generated (936 chars).
+2026-03-19 17:48:31,426 | INFO     | src.api.routes.query | [session=ef332a38-6acd-46d7-8279-ccbac865fb3c] Query: exit
+2026-03-19 17:48:33,785 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:48:33,790 | INFO     | src.api.routes.query | [session=ef332a38-6acd-46d7-8279-ccbac865fb3c] Answer generated (112 chars).
+2026-03-19 17:48:39,001 | INFO     | src.api.routes.query | [session=ef332a38-6acd-46d7-8279-ccbac865fb3c] Query: exit
+2026-03-19 17:48:41,465 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 17:48:41,471 | INFO     | src.api.routes.query | [session=ef332a38-6acd-46d7-8279-ccbac865fb3c] Answer generated (105 chars).
+2026-03-19 18:02:51,286 | INFO     | src.k8s.client | Loaded local kubeconfig (~/.kube/config)
+2026-03-19 18:05:59,527 | INFO     | src.api.routes.query | [session=24d81a1b-6ba3-4026-995f-fb606f733ff2] Query: How many pods are running in the cluster?
+2026-03-19 18:06:00,837 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 18:06:03,196 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 18:06:03,199 | INFO     | src.api.routes.query | [session=24d81a1b-6ba3-4026-995f-fb606f733ff2] Answer generated (155 chars).
+2026-03-19 18:06:22,854 | INFO     | src.api.routes.query | [session=24d81a1b-6ba3-4026-995f-fb606f733ff2] Query: What deployments do we have and are they all healthy?
+2026-03-19 18:06:24,496 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 18:06:28,475 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 18:06:28,480 | INFO     | src.api.routes.query | [session=24d81a1b-6ba3-4026-995f-fb606f733ff2] Answer generated (485 chars).
+2026-03-19 18:06:40,592 | INFO     | src.api.routes.query | [session=24d81a1b-6ba3-4026-995f-fb606f733ff2] Query: Why is broken-app failing?
+2026-03-19 18:06:42,724 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 18:06:47,228 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 18:06:47,232 | INFO     | src.api.routes.query | [session=24d81a1b-6ba3-4026-995f-fb606f733ff2] Answer generated (542 chars).
+2026-03-19 18:07:02,843 | INFO     | src.api.routes.query | [session=24d81a1b-6ba3-4026-995f-fb606f733ff2] Query: What about crasher, whats wrong with it?
+2026-03-19 18:07:05,865 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 18:07:09,623 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 18:07:15,493 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 18:07:15,497 | INFO     | src.api.routes.query | [session=24d81a1b-6ba3-4026-995f-fb606f733ff2] Answer generated (781 chars).
+2026-03-19 18:07:40,404 | INFO     | src.api.routes.query | [session=24d81a1b-6ba3-4026-995f-fb606f733ff2] Query: How is my cluster doing overall? Give me a health score
+2026-03-19 18:07:42,728 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 18:07:49,531 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 18:07:49,535 | INFO     | src.api.routes.query | [session=24d81a1b-6ba3-4026-995f-fb606f733ff2] Answer generated (769 chars).
+2026-03-19 18:08:07,001 | INFO     | src.api.routes.query | [session=24d81a1b-6ba3-4026-995f-fb606f733ff2] Query: How do I fix the broken-app issue?
+2026-03-19 18:08:10,581 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 18:08:10,585 | INFO     | src.api.routes.query | [session=24d81a1b-6ba3-4026-995f-fb606f733ff2] Answer generated (423 chars).
+2026-03-19 18:08:35,454 | INFO     | src.api.routes.query | [session=24d81a1b-6ba3-4026-995f-fb606f733ff2] Query: Show me the logs for the k8sgpt pod
+2026-03-19 18:08:38,131 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 18:08:40,688 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 18:08:44,783 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 18:08:44,788 | INFO     | src.api.routes.query | [session=24d81a1b-6ba3-4026-995f-fb606f733ff2] Answer generated (266 chars).
+2026-03-19 18:08:50,343 | INFO     | src.api.routes.query | [session=24d81a1b-6ba3-4026-995f-fb606f733ff2] Query: exit
+2026-03-19 18:08:52,772 | INFO     | httpx | HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-03-19 18:08:52,779 | INFO     | src.api.routes.query | [session=24d81a1b-6ba3-4026-995f-fb606f733ff2] Answer generated (106 chars).
